@@ -13,8 +13,8 @@ int main()
 	load_param p;
 	
 	int pid_from, pid_to; 
-	pid_from =  37;	//21 - 29 - 37 - 47
-	pid_to =	42;	//28 - 36 - 46 - 60
+	pid_from =  21;	//21 - 29 - 37 - 47
+	//pid_to =	42;	//28 - 36 - 46 - 60
 	//pid_to = pid_from;
 
 	for (int pid_n = pid_from; pid_n <= pid_to; pid_n++) {

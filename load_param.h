@@ -9,7 +9,7 @@ class load_param {
 
 public:
 	//set window size and step for local shift
-	int sizeH = 100; // 200/100
+	int sizeH = 200; // 200/100
 	int stepH = (sizeH / 2); //set windows width and windows step
 	
 	//set threshold for b/w + limit for x and y shift
