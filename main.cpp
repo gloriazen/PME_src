@@ -13,8 +13,8 @@ int main()
 	load_param p;
 	
 	int pid_from, pid_to; 
-	pid_from =  21;	//21 - 29 - 37 - 47
-	//pid_to =	42;	//28 - 36 - 46 - 60
+	pid_from =  37;	//21 - 29 - 37 - 47
+	pid_to =	42;	//28 - 36 - 46 - 60
 	//pid_to = pid_from;
 
 	for (int pid_n = pid_from; pid_n <= pid_to; pid_n++) {
@@ -243,15 +243,15 @@ int main()
 			start = std::clock();
 
 			//defect dir
-			char *path_buffer, drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+			char *path_buffer, drive[_MAX_DIR], dir[_MAX_DIR], fname[_MAX_DIR], ext[_MAX_DIR];
 			path_buffer = &im_pair.fix[0u];
 			_splitpath_s(path_buffer, drive, dir, fname, ext); // C4996  	
 			//defect name
-			char *path_buffer_, drive_[_MAX_DRIVE], dir_[_MAX_DIR], fname_[_MAX_FNAME], ext_[_MAX_EXT];
+			char *path_buffer_, drive_[_MAX_DIR], dir_[_MAX_DIR], fname_[_MAX_DIR], ext_[_MAX_DIR];
 			path_buffer_ = &im_pair.defect[0u];
 			_splitpath_s(path_buffer_, drive_, dir_, fname_, ext_); // C4996  	
 			//create path defect
-			char* _defect = strcat(drive, dir);
+			char* _defect = strcat(drive_, dir_);
 			string dir_defect(_defect); dir_defect = dir_defect + "defect_roi.txt";
 			cout << dir_defect << endl;
 			//create img name
@@ -283,10 +283,11 @@ int main()
 			}
 
 			//add ROI to img_ROI
+			cvtColor(img_ROI, img_ROI, CV_GRAY2BGR);
 			for (int i = 0; i < ROI_X_v.size(); i++) {
 				Rect ROI = Rect(ROI_X_v.at(i), ROI_Y_v.at(i), ROI_dX_v.at(i), ROI_dY_v.at(i));
 				cv::rectangle(img_ROI, ROI, Scalar(0, 255, 0), 1, LINE_8, 0);
-			}
+			}		
 			shift_time = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 			std::cout << "\nTime: " << shift_time << endl;
 		}

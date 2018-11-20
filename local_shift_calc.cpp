@@ -18,10 +18,12 @@ local_shift_calc::Txy local_shift_calc::get_shift(load_param& p){
 	int left = p.lim_x; int right = left;
 
 	//Binary image
-	cuda::GpuMat img1_b_GPU, img2_b_GPU, mask_fix_b_GPU, mask_mov_b_GPU;
+	cuda::GpuMat img1_b_GPU, img2_b_GPU, mask_fix_b_GPU, mask_mov_b_GPU, img1_sobel_GPU, img2_sobel_GPU;
 
-	cuda::threshold(img1, img1_b_GPU, p.bw_thr, 255, THRESH_BINARY);
-	cuda::threshold(img2, img2_b_GPU, p.bw_thr, 255, THRESH_BINARY);
+
+	img1_b_GPU.upload(img1);
+	img2_b_GPU.upload(img2);
+
 	if (!empty(mask_fix)) {
 		cuda::threshold(mask_fix, mask_fix_b_GPU, p.bw_thr, 1, THRESH_BINARY);
 		cuda::multiply(img1_b_GPU, mask_fix_b_GPU, img1_b_GPU);
@@ -30,6 +32,9 @@ local_shift_calc::Txy local_shift_calc::get_shift(load_param& p){
 		cuda::threshold(mask_mov, mask_mov_b_GPU, p.bw_thr, 1, THRESH_BINARY);
 		cuda::multiply(img2_b_GPU, mask_mov_b_GPU, img2_b_GPU);
 	}
+	cuda::threshold(img1_b_GPU, img1_sobel_GPU, p.bw_thr, 255, THRESH_BINARY);
+	cuda::threshold(img2_b_GPU, img2_sobel_GPU, p.bw_thr, 255, THRESH_BINARY);
+
 
 	cuda::GpuMat result, image_d_border;
 	double max_value;
@@ -39,11 +44,11 @@ local_shift_calc::Txy local_shift_calc::get_shift(load_param& p){
 	cuda::GpuMat grad_x, grad_y;
 	int delta = 0, scale = 1, ddepth = CV_8U;
 	// Gradient X
-	Ptr<cv::cuda::Filter> filter_x = cuda::createSobelFilter(img2_b_GPU.type(), ddepth, 1, 0, 3, scale, BORDER_DEFAULT);
-	filter_x->apply(img2_b_GPU, grad_x);
+	Ptr<cv::cuda::Filter> filter_x = cuda::createSobelFilter(img2_sobel_GPU.type(), ddepth, 1, 0, 3, scale, BORDER_DEFAULT);
+	filter_x->apply(img2_sobel_GPU, grad_x);
 	// Gradient X
-	Ptr<cv::cuda::Filter> filter_y = cuda::createSobelFilter(img2_b_GPU.type(), ddepth, 0, 1, 3, scale, BORDER_DEFAULT);
-	filter_y->apply(img2_b_GPU, grad_y);
+	Ptr<cv::cuda::Filter> filter_y = cuda::createSobelFilter(img2_sobel_GPU.type(), ddepth, 0, 1, 3, scale, BORDER_DEFAULT);
+	filter_y->apply(img2_sobel_GPU, grad_y);
 
 
 	for (int i = 0; i <= ROW_N; i++) {
